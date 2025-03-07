@@ -1,6 +1,6 @@
 # weakpass-lookup
 
-A Python script that queries the [Weakpass API](https://weakpass.com) to attempt cracking various types of password hashes (NTLM, MD5, SHA1, SHA256). This tool is particularly helpful for cracking NTLM hashes obtained via DCSync in a Windows Domain environment, though it supports several other hash types as well.
+A Python script that queries the [Weakpass API](https://weakpass.com/api) to attempt cracking various types of password hashes (NTLM, MD5, SHA1, SHA256). This tool is particularly helpful for cracking NTLM hashes obtained via DCSync in a Windows Domain environment, though it supports several other hash types as well.
 
 ## Features
 
