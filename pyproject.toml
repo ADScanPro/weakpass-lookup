@@ -23,4 +23,4 @@ classifiers = [
 ]
 
 [project.scripts]
-weakpass-lookup = "weakpass_lookup:main"
+weakpass-lookup = "weakpass_lookup.main:main"
