@@ -9,7 +9,7 @@ description = "A tool to crack some hashes through the Weakpass API."
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
-    { name = "ADScan", email = "github@adscanpro.com" }
+    { name = "ADscan", email = "github@adscanpro.com" }
 ]
 requires-python = ">=3.6"
 dependencies = [
