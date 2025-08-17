@@ -1,0 +1,647 @@
+openapi: 3.0.3
+info:
+  title: Weakpass - API
+  description: |-
+    The Weakpass REST API provides flexible methods to ensure users aren't using weak or compromised passwords, while also simplifying hash-cracking challenges.
+    - [OpenAPI.yaml](https://weakpass.com/openapi.yaml)
+  version: 1.1.1
+servers:
+  - url: https://weakpass.com/api/v1
+tags:
+  - name: range
+    description: Retrieve a list of hash-password pairs based on a specific prefix. 
+  - name: search
+    description: Search supplied hash in the database. You do not need to specify exact hash type.
+  - name: generate
+    description: Generate wordlist for a certain words based on specific hashcat rules
+  - name: wordlists
+    description: Retrieve wordlists data in chunks of specified size.
+paths:
+  /range/{prefix}:
+    get:
+      tags:
+        - range
+      description: This method allows you to retrieve a list of hash-password pairs based on a specific prefix. Currently, all_in_one wordlist is used as the precomputed list for md5 and ntlm, and weakpass_4a for sha1 and sha256.
+      parameters:
+        - name: prefix
+          in: path
+          description: Hash prefix must have size between 6 and 64 characters and contains only next chars - [A-Fa-f0-9]
+          required: true
+          explode: false
+          schema:
+            type: string
+        - name: filter
+          in: query
+          description: Show only the pass or hash in response
+          required: false
+          explode: false
+          schema:
+            type: string
+            enum: 
+             - hash
+             - pass
+        - name: type
+          in: query
+          description: Specify the type of hash list
+          required: false
+          explode: false
+          schema:
+            default: md5
+            type: string
+            enum: 
+             - md5
+             - ntlm
+             - sha1
+             - sha256
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/pair'          
+        '404':
+          description: No data with associated prefix
+        '500':
+          description: Prefix has invalid characters
+  /range/{prefix}.json:
+    get:
+      tags:
+        - range
+      description: This method allows you to retrieve a list of hash-password pairs based on a specific prefix. Currently, all_in_one wordlist is used as the precomputed list for md5 and ntlm, and weakpass_4a for sha1 and sha256. 
+      parameters:
+        - name: prefix
+          in: path
+          description: Hash prefix must have size between 6 and 64 characters and contains only next chars - [A-Fa-f0-9]
+          required: true
+          explode: false
+          schema:
+            type: string
+        - name: filter
+          in: query
+          description: Show only the pass or hash in response
+          required: false
+          explode: false
+          schema:
+            type: string
+            enum: 
+             - hash
+             - pass
+        - name: type
+          in: query
+          description: Specify the type of hash list
+          required: false
+          explode: false
+          schema:
+            default: md5
+            type: string
+            enum: 
+             - md5
+             - ntlm
+             - sha1
+             - sha256
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/pair'          
+        '404':
+          description: No data with associated prefix
+        '500':
+          description: Prefix has invalid characters
+  /range/{prefix}.txt:
+    get:
+      tags:
+        - range
+      description: This method allows you to retrieve a list of hash-password pairs based on a specific prefix. Currently, all_in_one wordlist is used as the precomputed list for md5 and ntlm, and weakpass_4a for sha1 and sha256. 
+      parameters:
+        - name: prefix
+          in: path
+          description: Hash prefix must have size between 6 and 64 characters and contains only next chars - [A-Fa-f0-9]
+          required: true
+          explode: false
+          schema:
+            type: string
+        - name: filter
+          in: query
+          description: Show only the pass or hash in response
+          required: false
+          explode: false
+          schema:
+            type: string
+            enum: 
+             - hash
+             - pass
+        - name: type
+          in: query
+          description: Specify the type of hash list
+          required: false
+          explode: false
+          schema:
+            default: md5
+            type: string
+            enum: 
+             - md5
+             - ntlm
+             - sha1
+             - sha256
+      responses:
+        '200':
+          description: successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                  12345678902dd833fc9db9d72e9483c5:4kgdjv1
+                  12345678910e3b342a0bd4b77050e274:ieaszd4blood
+                  1234567892266fe0ea42123bc515e746:ryqwww1rwrwe     
+        '404':
+          description: No data with associated prefix
+        '500':
+          description: Prefix has invalid characters
+  /search/{hash}:
+    get:
+      tags:
+        - search
+      description: This method allows you to search for a supplied hash in the database without needing to specify the exact hash type. The system will automatically detect the hash type and return the corresponding results if available.
+      parameters:
+        - name: hash
+          in: path
+          description: Hash prefix must have size between 32 and 64 characters and contains only next chars - [A-Fa-f0-9]
+          required: true
+          explode: false
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/hash'          
+        '404':
+          description: No data with associated hash
+        '500':
+          description: General error
+  /search/{hash}.json:
+    get:
+      tags:
+        - search
+      description: This method allows you to search for a supplied hash in the database without needing to specify the exact hash type. The system will automatically detect the hash type and return the corresponding results if available.
+      parameters:
+        - name: hash
+          in: path
+          description: Hash prefix must have size between 32 and 64 characters and contains only next chars - [A-Fa-f0-9]
+          required: true
+          explode: false
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/hash'          
+        '404':
+          description: No data with associated hash
+        '500':
+          description: General error
+  /search/{hash}.txt:
+    get:
+      tags:
+        - search
+      description: This method allows you to search for a supplied hash in the database without needing to specify the exact hash type. The system will automatically detect the hash type and return the corresponding results if available.
+      parameters:
+        - name: hash
+          in: path
+          description: Hash prefix must have size between 32 and 64 characters and contains only next chars - [A-Fa-f0-9]
+          required: true
+          explode: false
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                  md5;827ccb0eea8a706c4c34a16891f84e7b;12345     
+        '404':
+          description: No data with associated hash
+        '500':
+          description: General error                    
+  /generate/{string}:
+    get:
+      tags:
+        - generate
+      description: Generate wordlist for specific string based on certain hashcat rule set.
+      parameters:
+        - name: string
+          in: path
+          description: string
+          required: true
+          explode: false
+          schema:
+            type: string
+        - name: set
+          in: query
+          description: select specific ruleset to use for wordlist generation (see more at https://github.com/zzzteph/weakpass/rules)
+          required: false
+          explode: false
+          schema:
+            default: online.rule
+            type: string
+            enum: 
+             - online.rule
+             - top_3000.rule
+             - top_1500.rule
+             - top_750.rule
+             - top_500.rule
+             - top_250.rule
+             - nsa64.rule
+             - numbers.rule
+             - numbers100.rule
+             - years_1900_2025.rule
+             - years.rule
+             - symbols.rule
+        - name: type
+          in: query
+          description: Type of the return data
+          required: false
+          explode: false
+          schema:
+            default: json
+            type: string
+            enum: 
+             - json
+             - txt
+      responses:
+        '200':
+          description: successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                  password
+                  Password
+                  PASSWORD
+                  pASSWORD
+                  password1
+                  password2
+                  password3
+                  password4
+                  password5
+                  password6
+                  password7
+                  password8
+                  password9
+                  password0      
+        '500':
+          description: General error (see description)       
+  /generate:
+    post:
+      tags:
+        - generate
+      description: Generate wordlist for specific string based on certain hashcat rule set.
+      parameters:
+        - name: string
+          in: query
+          description: string that will be used to apply the rules
+          required: true
+          explode: false
+          schema:
+            type: string
+        - name: set
+          in: query
+          description: select specific ruleset to use for wordlist generation (see more at https://github.com/zzzteph/weakpass/rules)
+          required: false
+          explode: false
+          schema:
+            default: online.rule
+            type: string
+            enum: 
+             - online.rule
+             - top_3000.rule
+             - top_1500.rule
+             - top_750.rule
+             - top_500.rule
+             - top_250.rule
+             - nsa64.rule
+             - numbers.rule
+             - numbers100.rule
+             - years_1900_2025.rule
+             - years.rule
+             - symbols.rule
+        - name: type
+          in: query
+          description: Type of the return data
+          required: false
+          explode: false
+          schema:
+            default: json
+            type: string
+            enum: 
+             - json
+             - txt
+      responses:
+        '200':
+          description: successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                  password
+                  Password
+                  PASSWORD
+                  pASSWORD
+                  password1
+                  password2
+                  password3
+                  password4
+                  password5
+                  password6
+                  password7
+                  password8
+                  password9
+                  password0      
+        '500':
+          description: General error (see description)                     
+  /generate/file:
+    post:
+      tags:
+        - generate
+      description: Generate a wordlist based on the provided Hashcat rule set as a file with content disposition.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: hashcat rules to upload
+                string:
+                  type: string
+                  description: string that will be used to apply the rules
+                type:
+                  type: string
+                  description: type of the return data (txt or json)
+              required:
+                - file
+                - string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                  password
+                  Password
+                  PASSWORD
+                  pASSWORD
+                  password1
+                  password2
+                  password3
+                  password4
+                  password5
+                  password6
+                  password7
+                  password8
+                  password9
+                  password0      
+        '500':
+          description: General error (see description)                      
+  /generate/file/{string}:
+    post:
+      tags:
+        - generate
+      description: Generate a wordlist based on the provided Hashcat rule set as a file with content disposition.
+      parameters:
+        - name: string
+          in: path
+          description: string that will be used to apply the rules
+          required: true
+          explode: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: hashcat rules to upload
+                type:
+                  type: string
+                  description: type of the return data (txt or json)
+              required:
+                - file
+                - string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                  password
+                  Password
+                  PASSWORD
+                  pASSWORD
+                  password1
+                  password2
+                  password3
+                  password4
+                  password5
+                  password6
+                  password7
+                  password8
+                  password9
+                  password0      
+        '500':
+          description: General error (see description)                      
+
+  /generate/custom/{string}:
+    post:
+      tags:
+        - generate
+      description: Generate a wordlist based on the provided Hashcat rule set.
+      parameters:
+        - name: string
+          in: path
+          description: string that will be used to apply the rules
+          required: true
+          explode: false
+          schema:
+            type: string
+        - name: type
+          in: query
+          description: Type of the return data
+          required: false
+          explode: false
+          schema:
+            default: json
+            type: string
+            enum: 
+             - json
+             - txt            
+      requestBody:
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+              description: hashcat rules
+      responses:
+        '200':
+          description: successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                  password
+                  Password
+                  PASSWORD
+                  pASSWORD
+                  password1
+                  password2
+                  password3
+                  password4
+                  password5
+                  password6
+                  password7
+                  password8
+                  password9
+                  password0      
+        '500':
+          description: General error (see description)                         
+  /wordlists:
+    get:
+      tags:
+        - wordlists
+      description: Get the list of available wordlists and rules
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example:
+                  - 10_million_password_list_top_10000.txt
+                  - hashmob.net.small.found.txt
+                  - ignis-10K.txt
+                  - nsa64.rule
+                  - rockyou.txt
+
+        '404':
+          description: No data
+  /wordlists/{wordlist}:
+    get:
+      tags:
+        - wordlists
+      description: Return content of specific wordlist or rule via API
+      parameters:
+        - name: wordlist
+          in: path
+          description: Name of the wordlist you can get from /wordlist request 
+          required: true
+          explode: false
+          schema:
+            type: string
+            enum: 
+                - 10_million_password_list_top_10000.txt
+                - hashmob.net.small.found.txt
+                - ignis-10K.txt
+                - nsa64.rule
+                - rockyou.txt
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                          123456
+                          password
+                          12345678
+                          qwerty
+                          123456789
+                          12345
+                          1234
+                          111111
+                          1234567
+                          dragon
+                          123123
+                          baseball
+                          abc123
+                          football
+                          monkey   
+        '404':
+          description: No data
+        '500':
+          description: General error   
+
+          
+components:
+  schemas:
+    pair:
+      type: object
+      properties:
+        hash:
+          type: string
+          example: 12345678902dd833fc9db9d72e9483c5
+        pass:
+          type: string
+          example: 4kgdjv1
+    hash:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: 
+          - md5
+          - ntlm
+          - sha1
+          - sha256
+          example: md5
+        hash:
+          type: string
+          example: 12345678902dd833fc9db9d72e9483c5
+        pass:
+          type: string
+          example: 4kgdjv1

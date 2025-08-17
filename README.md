@@ -4,11 +4,11 @@ A Python script that queries the [Weakpass API](https://weakpass.com/api) to att
 
 ## Features
 
-- **Multiple hash type support**: NTLM, MD5, SHA1, and SHA256.
-- **Generic search option**: If a hash type is not specified, it attempts a generic search that covers ranges from 32 to 64 characters in length.
+- **Generic search**: No need to specify the hash type (supports NTLM, MD5, SHA1, SHA256).
 - **Bulk processing**: Reads hashes from a file and checks them concurrently using multiple worker threads.
 - **Single hash processing**: Checks a single hash without needing a file.
 - **Verbose mode**: Provides additional debug output to help with troubleshooting.
+- **Debug mode**: Rich-formatted tracebacks and HTTP details for local/dev troubleshooting.
 
 ## Installation
 
@@ -31,8 +31,7 @@ pip install weakpass-lookup
 ## Usage
 
 ```sh
-usage: weakpass-lookup [-h] (-f FILE | -H HASH) [-t {md5,ntlm,sha1,sha256}]
-                       [-w WORKERS] [-v]
+usage: weakpass-lookup [-h] (-f FILE | -H HASH) [-w WORKERS] [-v] [-d]
 
 Searches hashes in the Weakpass API
 
@@ -40,26 +39,24 @@ optional arguments:
   -h, --help            show this help message and exit
   -f FILE, --file FILE  File with list of hashes (one per line)
   -H HASH, --hash HASH  Individual hash to search
-  -t {md5,ntlm,sha1,sha256}, --type {md5,ntlm,sha1,sha256}
-                        Hash type (optional, if not specified generic search
-                        is used)
   -w WORKERS, --workers WORKERS
                         Number of threads to use (default: 10)
   -v, --verbose         Verbose mode to show more debugging details
+  -d, --debug           Debug mode with tracebacks and HTTP details (use only in local/dev)
 ```
 
 ### Examples
 
-1. **Crack a single NTLM hash:**
+1. **Crack a single hash:**
     
     ```sh
-    weakpass-lookup --hash <HASH_VALUE> --type ntlm
+    weakpass-lookup --hash <HASH_VALUE>
 	  ```
     
 2. **Crack multiple hashes from a file (default 10 threads):**
     
     ```sh
-    weakpass-lookup --file /path/to/ntlm_hashes.txt --type ntlm --workers 10
+    weakpass-lookup --file /path/to/hashes.txt --workers 10
 	  ```
     
 3. **Use verbose mode for debugging:**
@@ -68,10 +65,10 @@ optional arguments:
     weakpass-lookup --file /path/to/hashes.txt --verbose
 	  ```
     
-4. **Generic search (no specific hash type):**
+4. **Detailed debug:**
     
     ```sh
-    weakpass-lookup --hash <HASH_VALUE>
+    weakpass-lookup --hash <HASH_VALUE> --debug
 	  ```
 
 ## Output
